@@ -1504,6 +1504,11 @@ NO inventes hallazgos. SÉ PRECISO.`;
         </div>
       )}
 
+      {/* Chat IA Post-Análisis — MOVED HERE for visibility */}
+      {res && (
+        <ChatIA receiptText={txt} analysisResult={res} aiResult={aiResult} />
+      )}
+
       {/* Checklist */}
       {/* AI Deep Analysis */}
       {(aiLoading || aiResult) && (
@@ -1618,11 +1623,6 @@ NO inventes hallazgos. SÉ PRECISO.`;
           ))}
         </div>
       </Glass>
-
-      {/* Chat IA Post-Análisis */}
-      {res && (
-        <ChatIA receiptText={txt} analysisResult={res} aiResult={aiResult} />
-      )}
 
       {/* Botón recibo de prueba — siempre visible */}
       <Glass className="p-4">
