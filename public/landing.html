@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Axonexus Signal - Detecta Cobros Indebidos en tu Recibo | Movistar, Claro, Entel</title>
+<meta name="description" content="IA que detecta cobros indebidos VAS en tu recibo de Movistar, Claro o Entel. Recupera tu dinero con base legal OSIPTEL.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#050a0e;--surface:rgba(255,255,255,0.02);--border:rgba(255,255,255,0.05);--emerald:#34d399;--emerald-dim:rgba(52,211,153,0.08);--red:#f87171;--red-dim:rgba(248,113,113,0.08);--amber:#fbbf24;--cyan:#22d3ee;--text:rgba(255,255,255,0.85);--text-dim:rgba(255,255,255,0.35);--text-muted:rgba(255,255,255,0.15);--f-body:'Instrument Sans',sans-serif;--f-mono:'JetBrains Mono',monospace;--f-disp:'Playfair Display',serif}
+html{scroll-behavior:smooth}
+body{font-family:var(--f-body);background:var(--bg);color:var(--text);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+::selection{background:var(--emerald);color:var(--bg)}
+body::before{content:'';position:fixed;inset:0;opacity:.015;pointer-events:none;z-index:9999;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.gbg{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(rgba(52,211,153,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(52,211,153,.03) 1px,transparent 1px);background-size:60px 60px}
+.gbg::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(52,211,153,.06),transparent 70%)}
+.ct{max-width:1200px;margin:0 auto;padding:0 24px;position:relative;z-index:1}
+section{padding:120px 0}
+@keyframes pg{0%,100%{box-shadow:0 0 20px rgba(52,211,153,.1)}50%{box-shadow:0 0 40px rgba(52,211,153,.25)}}
+@keyframes sl{0%{transform:translateY(-100%)}100%{transform:translateY(100%)}}
+@keyframes mq{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.an{opacity:0;transform:translateY(40px);transition:all .8s cubic-bezier(.16,1,.3,1)}
+.an.v{opacity:1;transform:translateY(0)}
+.d1{transition-delay:.1s}.d2{transition-delay:.2s}.d3{transition-delay:.3s}.d4{transition-delay:.4s}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 0;background:rgba(5,10,14,.8);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+nav .ct{display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.lm{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--emerald),#059669);display:flex;align-items:center;justify-content:center}
+.lm svg{width:18px;height:18px}
+.lt{font-weight:700;font-size:14px;color:var(--text);letter-spacing:.15em;text-transform:uppercase}
+.lt span{color:var(--emerald);font-weight:400}
+.nc{padding:10px 24px;border-radius:10px;background:var(--emerald);color:var(--bg);font-weight:700;font-size:13px;letter-spacing:.05em;text-decoration:none;transition:all .3s}
+.nc:hover{background:#6ee7b7;box-shadow:0 4px 20px rgba(52,211,153,.3)}
+
+.hero{min-height:100vh;display:flex;align-items:center;padding-top:80px}
+.hc{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
+.hb{display:inline-flex;align-items:center;gap:8px;padding:6px 16px 6px 8px;border-radius:100px;background:var(--emerald-dim);border:1px solid rgba(52,211,153,.15);margin-bottom:24px}
+.hbd{width:8px;height:8px;border-radius:50%;background:var(--emerald);animation:pg 2s infinite}
+.hbt{font-size:12px;color:var(--emerald);font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.hero h1{font-family:var(--f-disp);font-size:clamp(2.5rem,5vw,4rem);font-weight:900;line-height:1.05;margin-bottom:24px;color:#fff}
+.hero h1 em{font-style:normal;background:linear-gradient(135deg,var(--emerald),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hs{font-size:18px;color:var(--text-dim);line-height:1.7;margin-bottom:40px;max-width:520px}
+.hs strong{color:var(--text);font-weight:600}
+.ha{display:flex;gap:16px;flex-wrap:wrap}
+.bp{padding:16px 32px;border-radius:14px;background:linear-gradient(135deg,var(--emerald),#059669);color:#fff;font-weight:700;font-size:15px;text-decoration:none;transition:all .4s;display:inline-flex;align-items:center;gap:10px;border:none;cursor:pointer}
+.bp:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(52,211,153,.3)}
+.bs{padding:16px 32px;border-radius:14px;background:transparent;color:var(--text-dim);font-weight:600;font-size:15px;text-decoration:none;border:1px solid var(--border);display:inline-flex;align-items:center;gap:8px;transition:all .3s}
+.bs:hover{color:var(--text);border-color:rgba(255,255,255,.15)}
+
+.rm{background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:20px;padding:28px;position:relative;overflow:hidden}
+.rm::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--emerald),var(--cyan),var(--emerald))}
+.rh{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.rop{font-weight:700;font-size:14px}.rto{font-family:var(--f-mono);font-size:20px;font-weight:700}
+.rl{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.02)}
+.rln{font-size:13px;color:var(--text-dim)}.rla{font-family:var(--f-mono);font-size:13px;color:var(--text-dim)}
+.rl.fl{background:var(--red-dim);margin:0 -12px;padding:10px 12px;border-radius:8px;border:none;position:relative}
+.rl.fl .rln{color:var(--red);font-weight:600}.rl.fl .rla{color:var(--red);font-weight:700}
+.fb{position:absolute;right:12px;top:50%;transform:translateY(-50%);padding:2px 8px;border-radius:4px;background:rgba(248,113,113,.15);color:var(--red);font-size:9px;font-weight:700;letter-spacing:.08em;font-family:var(--f-mono)}
+.so{position:absolute;inset:0;pointer-events:none;border-radius:20px;overflow:hidden}
+.so::after{content:'';position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--emerald),transparent);animation:sl 3s ease-in-out infinite;opacity:.6}
+
+.ms{padding:40px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);overflow:hidden}
+.mt{display:flex;animation:mq 30s linear infinite;width:max-content}
+.mi{display:flex;align-items:center;gap:12px;padding:0 40px;white-space:nowrap}
+.ma{font-family:var(--f-mono);font-size:15px;font-weight:700;color:var(--emerald)}
+.mx{font-size:13px;color:var(--text-dim)}
+.md{width:4px;height:4px;border-radius:50%;background:var(--border)}
+
+.ph{text-align:center;max-width:700px;margin:0 auto 60px}
+.sl{font-family:var(--f-mono);font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;justify-content:center;gap:8px}
+.sl::before,.sl::after{content:'';width:20px;height:1px;background:currentColor;opacity:.3}
+.st{font-family:var(--f-disp);font-size:clamp(2rem,4vw,3rem);font-weight:900;line-height:1.1;margin-bottom:20px;color:#fff}
+.ss{font-size:17px;color:var(--text-dim);line-height:1.7}
+
+.pg{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.pc{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px;transition:all .4s;position:relative;overflow:hidden}
+.pc:hover{border-color:rgba(248,113,113,.15);transform:translateY(-4px)}
+.pc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--red);opacity:0;transition:opacity .3s}
+.pc:hover::before{opacity:1}
+.pi{width:48px;height:48px;border-radius:12px;background:var(--red-dim);display:flex;align-items:center;justify-content:center;margin-bottom:20px;color:var(--red)}
+.pc h3{font-size:18px;font-weight:700;margin-bottom:10px;color:#fff}
+.pc p{font-size:14px;color:var(--text-dim);line-height:1.6}
+.ps{margin-top:16px;padding-top:16px;border-top:1px solid var(--border)}
+.psn{font-family:var(--f-mono);font-size:28px;font-weight:700;color:var(--red)}
+.psl{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-top:4px}
+
+.stp{display:grid;grid-template-columns:repeat(3,1fr);gap:0;position:relative}
+.stp::before{content:'';position:absolute;top:44px;left:15%;right:15%;height:2px;background:linear-gradient(90deg,var(--emerald),var(--cyan));opacity:.15}
+.sn{width:88px;height:88px;border-radius:50%;background:var(--emerald-dim);border:2px solid rgba(52,211,153,.15);display:flex;align-items:center;justify-content:center;margin:0 auto 24px;position:relative;z-index:1}
+.sn svg{width:36px;height:36px;color:var(--emerald)}
+.step{text-align:center;padding:0 32px}
+.step h3{font-size:17px;font-weight:700;margin-bottom:10px;color:#fff}
+.step p{font-size:14px;color:var(--text-dim);line-height:1.6}
+.stm{display:inline-flex;margin-top:12px;padding:4px 12px;border-radius:100px;background:var(--emerald-dim);font-family:var(--f-mono);font-size:11px;color:var(--emerald);font-weight:600}
+
+.dg{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.dc{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;display:flex;gap:16px;transition:all .3s}
+.dc:hover{border-color:rgba(52,211,153,.15);background:rgba(52,211,153,.02)}
+.dcd{font-family:var(--f-mono);font-size:12px;font-weight:700;color:var(--emerald);background:var(--emerald-dim);padding:4px 10px;border-radius:6px;height:fit-content;white-space:nowrap}
+.dc h4{font-size:15px;font-weight:700;margin-bottom:6px;color:#fff}
+.dc p{font-size:13px;color:var(--text-dim);line-height:1.5}
+.dl{font-family:var(--f-mono);font-size:11px;color:var(--amber);margin-top:8px;display:block}
+
+.lg{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.lc{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:28px;text-align:center;transition:all .3s}
+.lc:hover{border-color:rgba(251,191,36,.15)}
+.li{font-size:32px;margin-bottom:16px}
+.lc h4{font-family:var(--f-mono);font-size:13px;font-weight:700;color:var(--amber);margin-bottom:8px}
+.lc p{font-size:13px;color:var(--text-dim);line-height:1.6}
+
+.cb{max-width:700px;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:40px;position:relative;overflow:hidden}
+.cb::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--emerald),var(--cyan))}
+.cr{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:24px}
+.cf label{display:block;font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;font-family:var(--f-mono)}
+.cf input,.cf select{width:100%;padding:14px;border-radius:10px;border:1px solid var(--border);background:rgba(255,255,255,.02);color:var(--text);font-family:var(--f-mono);font-size:16px;font-weight:600;outline:none;transition:all .3s}
+.cf input:focus,.cf select:focus{border-color:var(--emerald);box-shadow:0 0 0 3px rgba(52,211,153,.1)}
+.cf select option{background:var(--bg)}
+.crs{text-align:center;padding:24px;border-radius:14px;background:var(--emerald-dim);border:1px solid rgba(52,211,153,.15);margin-top:24px}
+.crl{font-size:12px;color:var(--emerald);text-transform:uppercase;letter-spacing:.1em;font-weight:600}
+.cra{font-family:var(--f-mono);font-size:48px;font-weight:700;color:var(--emerald);margin:8px 0}
+.cru{font-size:13px;color:var(--text-dim)}
+
+.tg{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.tc{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px;transition:all .3s}
+.tc:hover{border-color:rgba(52,211,153,.1)}
+.ts{color:var(--amber);font-size:14px;margin-bottom:12px;letter-spacing:2px}
+.tq{font-size:14px;color:var(--text-dim);line-height:1.7;margin-bottom:16px;font-style:italic}
+.ta{display:flex;align-items:center;gap:12px}
+.tv{width:36px;height:36px;border-radius:50%;background:var(--emerald-dim);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--emerald)}
+.tn{font-size:13px;font-weight:600;color:var(--text)}
+.td{font-size:11px;color:var(--text-muted)}
+
+.fc{padding:120px 0;text-align:center;position:relative}
+.fc::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 50% 50%,rgba(52,211,153,.06),transparent);pointer-events:none}
+.fc .ct{position:relative;z-index:1}
+.fca{font-family:var(--f-mono);font-size:clamp(3rem,8vw,6rem);font-weight:700;color:var(--emerald);margin-bottom:16px;text-shadow:0 0 60px rgba(52,211,153,.2)}
+.fct{font-family:var(--f-disp);font-size:clamp(1.5rem,3vw,2.5rem);font-weight:900;color:#fff;margin-bottom:12px}
+.fcs{font-size:17px;color:var(--text-dim);margin-bottom:40px;max-width:500px;margin-left:auto;margin-right:auto;line-height:1.6}
+.fcb{display:flex;justify-content:center;gap:32px;margin-top:32px}
+.fci{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-dim)}
+.fci svg{color:var(--emerald);width:18px;height:18px}
+
+footer{padding:40px 0;border-top:1px solid var(--border);text-align:center}
+footer p{font-size:12px;color:var(--text-muted);line-height:1.8}
+footer a{color:var(--emerald);text-decoration:none}
+.fl{font-size:10px;color:rgba(255,255,255,.08);margin-top:8px}
+
+@media(max-width:900px){.hc,.pg,.stp,.lg,.tg{grid-template-columns:1fr}.dg,.cr{grid-template-columns:1fr}.hero h1{font-size:2.2rem}section{padding:80px 0}.stp::before{display:none}.fcb{flex-direction:column;align-items:center;gap:16px}.hv{order:-1}}
+@media(max-width:600px){.ha{flex-direction:column;width:100%}.bp,.bs{width:100%;justify-content:center}.nc{display:none}}
+</style>
+</head>
+<body>
+<div class="gbg"></div>
+<nav><div class="ct">
+<a href="#" class="logo"><div class="lm"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><circle cx="12" cy="12" r="3"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg></div><div class="lt">AXONEXUS <span>SIGNAL</span></div></a>
+<a href="https://signal.axonexus.net" class="nc">Escanear mi recibo gratis &#8594;</a>
+</div></nav>
+
+<section class="hero"><div class="ct"><div class="hc">
+<div>
+<div class="hb an"><div class="hbd"></div><span class="hbt">IA detectora &#8226; Gratis</span></div>
+<h1 class="an d1">Te estan cobrando <em>servicios que nunca pediste</em></h1>
+<p class="hs an d2">Cada mes, <strong>millones de peruanos</strong> pagan suscripciones VAS ocultas en sus recibos de Movistar, Claro y Entel. Nuestro escaner de IA las detecta en segundos y te ayuda a <strong>recuperar tu dinero</strong>.</p>
+<div class="ha an d3">
+<a href="https://signal.axonexus.net" class="bp"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Escanear mi recibo gratis</a>
+<a href="#como" class="bs">Como funciona <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></a>
+</div></div>
+<div class="hv an d4"><div class="rm"><div class="so"></div>
+<div class="rh"><span class="rop">MOVISTAR PERU</span><span class="rto">S/ 89.30</span></div>
+<div class="rl"><span class="rln">Plan Ilimitado 45GB</span><span class="rla">S/ 65.00</span></div>
+<div class="rl"><span class="rln">Roaming datos</span><span class="rla">S/ 0.00</span></div>
+<div class="rl fl"><span class="rln">&#8226; Club Musica Premium (N&#176; 6789)</span><span class="rla">S/ 4.90</span><span class="fb">T-01 ILEGAL</span></div>
+<div class="rl fl"><span class="rln">&#8226; Alertas Horoscopo (N&#176; 5432)</span><span class="rla">S/ 2.90</span><span class="fb">T-01 ILEGAL</span></div>
+<div class="rl fl"><span class="rln">&#8226; Trivias SMS Gold (N&#176; 8877)</span><span class="rla">S/ 5.10</span><span class="fb">T-01 ILEGAL</span></div>
+<div class="rl"><span class="rln">IGV (18%)</span><span class="rla">S/ 11.40</span></div>
+<div style="margin-top:16px;padding-top:16px;border-top:2px solid var(--red);display:flex;justify-content:space-between;align-items:center">
+<span style="font-size:12px;color:var(--red);font-weight:700">3 COBROS ILEGALES DETECTADOS</span>
+<span style="font-family:var(--f-mono);font-size:18px;font-weight:700;color:var(--red)">S/ 12.90/mes</span>
+</div></div></div>
+</div></div></section>
+
+<div class="ms"><div class="mt">
+<div class="mi"><span class="ma">S/ 464</span><span class="mx">recuperados &#8212; Club Musica</span><span class="md"></span></div>
+<div class="mi"><span class="ma">S/ 338</span><span class="mx">recuperados &#8212; Alertas Horoscopo</span><span class="md"></span></div>
+<div class="mi"><span class="ma">S/ 212</span><span class="mx">recuperados &#8212; Trivias SMS</span><span class="md"></span></div>
+<div class="mi"><span class="ma">S/ 529</span><span class="mx">recuperados &#8212; Juegos Premium</span><span class="md"></span></div>
+<div class="mi"><span class="ma">S/ 176</span><span class="mx">recuperados &#8212; Noticias VIP</span><span class="md"></span></div>
+<div class="mi"><span class="ma">S/ 464</span><span class="mx">recuperados &#8212; Club Musica</span><span class="md"></span></div>
+<div class="mi"><span class="ma">S/ 338</span><span class="mx">recuperados &#8212; Alertas Horoscopo</span><span class="md"></span></div>
+<div class="mi"><span class="ma">S/ 212</span><span class="mx">recuperados &#8212; Trivias SMS</span><span class="md"></span></div>
+<div class="mi"><span class="ma">S/ 529</span><span class="mx">recuperados &#8212; Juegos Premium</span><span class="md"></span></div>
+<div class="mi"><span class="ma">S/ 176</span><span class="mx">recuperados &#8212; Noticias VIP</span><span class="md"></span></div>
+</div></div>
+<section style="background:linear-gradient(180deg,var(--bg),rgba(248,113,113,.02),var(--bg))">
+<div class="ct"><div class="ph">
+<div class="sl an" style="color:var(--red)">El problema</div>
+<h2 class="st an d1">Cobros fantasma en tu recibo</h2>
+<p class="ss an d2">Las operadoras facturan servicios VAS de terceros sin tu consentimiento, violando la normativa de OSIPTEL.</p>
+</div>
+<div class="pg">
+<div class="pc an">
+<div class="pi"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg></div>
+<h3>Suscripcion por Silencio</h3><p>Te suscriben a servicios sin SMS de confirmacion ni doble opt-in. Nunca pediste "Club Musica" ni "Horoscopo Diario".</p>
+<div class="ps"><div class="psn">87%</div><div class="psl">de usuarios no saben que pagan estos servicios</div></div></div>
+<div class="pc an d1">
+<div class="pi"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+<h3>Sin Registro de Aceptacion</h3><p>OSIPTEL exige 4 requisitos: SMS informativo, confirmacion ACEPTO, activacion y bienvenida. Casi nunca se cumplen.</p>
+<div class="ps"><div class="psn">S/ 5-15</div><div class="psl">cobro mensual promedio por servicio VAS</div></div></div>
+<div class="pc an d2">
+<div class="pi"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 14l-4-4m0 0l4-4m-4 4h11a4 4 0 010 8h-1"/></svg></div>
+<h3>Acumulacion Silenciosa</h3><p>S/ 12.90 al mes parece poco. Pero en 36 meses son S/ 464.40 que salieron de tu bolsillo.</p>
+<div class="ps"><div class="psn">36+</div><div class="psl">meses promedio antes de detectar el cobro</div></div></div>
+</div></div></section>
+
+<section id="como" style="background:linear-gradient(180deg,var(--bg),rgba(52,211,153,.02),var(--bg))">
+<div class="ct"><div class="ph">
+<div class="sl an" style="color:var(--emerald)">Como funciona</div>
+<h2 class="st an d1">3 pasos. 30 segundos.</h2>
+<p class="ss an d2">Sin registro. Sin costo. Solo sube tu recibo.</p>
+</div>
+<div class="stp">
+<div class="step an"><div class="sn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div><h3>Sube tu recibo</h3><p>Arrastra tu recibo en PDF o imagen. Movistar, Claro y Entel.</p><span class="stm">5 seg</span></div>
+<div class="step an d2"><div class="sn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg></div><h3>IA analiza</h3><p>Motor dual: escaneo local + Claude Sonnet contra normativa OSIPTEL.</p><span class="stm">15 seg</span></div>
+<div class="step an d4"><div class="sn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><h3>Recupera tu dinero</h3><p>Carta de reclamo + calculo de devolucion + asesoria legal directa.</p><span class="stm">10 seg</span></div>
+</div></div></section>
+
+<section style="background:linear-gradient(180deg,var(--bg),rgba(52,211,153,.015),var(--bg))">
+<div class="ct"><div class="ph">
+<div class="sl an" style="color:var(--cyan)">Motor de deteccion</div>
+<h2 class="st an d1">10 vectores de analisis</h2>
+<p class="ss an d2">Cada linea de tu recibo se cruza con la base legal completa de OSIPTEL.</p>
+</div>
+<div class="dg">
+<div class="dc an"><span class="dcd">T-01</span><div><h4>Suscripcion VAS sin consentimiento</h4><p>Servicios de terceros sin doble opt-in ni SMS de confirmacion.</p><span class="dl">Art. 118-A TUO</span></div></div>
+<div class="dc an d1"><span class="dcd">T-02</span><div><h4>Numero corto no solicitado</h4><p>Cobros de numeros cortos (4-6 digitos) sin registro de activacion.</p><span class="dl">Art. 118-A (ii)</span></div></div>
+<div class="dc an d2"><span class="dcd">T-03</span><div><h4>Concepto no facturable</h4><p>Cobros fuera de la lista taxativa del Art. 32.</p><span class="dl">Art. 32 TUO</span></div></div>
+<div class="dc an d3"><span class="dcd">T-04</span><div><h4>Cargo duplicado</h4><p>Mismo concepto cobrado mas de una vez en el periodo.</p><span class="dl">Art. 31 TUO</span></div></div>
+<div class="dc an d1"><span class="dcd">T-05</span><div><h4>Servicio no teleco</h4><p>Seguros o membresias no vinculados a telecomunicaciones.</p><span class="dl">Art. 32 (v)</span></div></div>
+<div class="dc an d2"><span class="dcd">T-06</span><div><h4>Penalidad prohibida</h4><p>Gastos administrativos o penalidades expresamente prohibidos.</p><span class="dl">Art. 32 ultimo parrafo</span></div></div>
+</div></div></section>
+<section style="border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:rgba(251,191,36,.015)">
+<div class="ct"><div class="ph">
+<div class="sl an" style="color:var(--amber)">Base legal</div>
+<h2 class="st an d1">Respaldado por la ley</h2>
+<p class="ss an d2">Cada deteccion se sustenta en normativa vigente de OSIPTEL.</p>
+</div>
+<div class="lg">
+<div class="lc an"><div class="li">&#167;</div><h4>Art. 118-A TUO</h4><p>Suscripcion VAS requiere 4 registros obligatorios: SMS informativo, confirmacion ACEPTO, activacion desde la linea, y SMS de bienvenida SALIR.</p></div>
+<div class="lc an d1"><div class="li">&#182;</div><h4>Art. 32 TUO</h4><p>Lista taxativa de conceptos facturables. Penalidades y gastos de cobranza estan expresamente prohibidos.</p></div>
+<div class="lc an d2"><div class="li">&#164;</div><h4>Art. 40 TUO</h4><p>La operadora debe devolver pagos indebidos con intereses, incluso si el usuario no lo solicita.</p></div>
+</div></div></section>
+
+<section style="background:linear-gradient(180deg,var(--bg),rgba(52,211,153,.02),var(--bg))">
+<div class="ct"><div class="ph">
+<div class="sl an" style="color:var(--emerald)">Calculadora</div>
+<h2 class="st an d1">Cuanto puedes recuperar?</h2>
+<p class="ss an d2">Ingresa el cobro mensual indebido y calcula tu devolucion.</p>
+</div>
+<div class="cb an d3">
+<div class="cr">
+<div class="cf"><label>Cobro mensual (S/)</label><input type="number" id="ca" value="12.90" step="0.10" min="0"></div>
+<div class="cf"><label>Meses cobrando</label><select id="cm"><option value="6">6 meses</option><option value="12">12 meses</option><option value="24">24 meses</option><option value="36" selected>36 meses</option><option value="48">48 meses</option></select></div>
+<div class="cf"><label>Operadora</label><select><option>Movistar</option><option>Claro</option><option>Entel</option><option>Bitel</option></select></div>
+</div>
+<div class="crs"><div class="crl">Devolucion estimada</div><div class="cra" id="ct">S/ 464.40</div><div class="cru">Incluye intereses legales (BCR 4% anual)</div></div>
+</div></div></section>
+
+<section><div class="ct"><div class="ph">
+<div class="sl an" style="color:var(--emerald)">Testimonios</div>
+<h2 class="st an d1">Ya estan recuperando su dinero</h2>
+</div>
+<div class="tg">
+<div class="tc an"><div class="ts">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="tq">"Tenia 3 cobros VAS que nunca pedi. Signal los detecto al instante. Me devolvieron S/ 380."</p><div class="ta"><div class="tv">ML</div><div><div class="tn">Maria L.</div><div class="td">Movistar &#8226; Lima</div></div></div></div>
+<div class="tc an d1"><div class="ts">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="tq">"No sabia que me cobraban S/ 7.80 mensuales. En 4 anios acumule S/ 400. Ya reclame."</p><div class="ta"><div class="tv">CR</div><div><div class="tn">Carlos R.</div><div class="td">Claro &#8226; Arequipa</div></div></div></div>
+<div class="tc an d2"><div class="ts">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="tq">"La carta de reclamo se genero sola con citas legales. En 15 dias OSIPTEL me dio razon."</p><div class="ta"><div class="tv">AP</div><div><div class="tn">Ana P.</div><div class="td">Entel &#8226; Trujillo</div></div></div></div>
+</div></div></section>
+
+<section class="fc">
+<div class="ct">
+<div class="fca an">S/ 464</div>
+<div class="fct an d1">promedio recuperable por usuario</div>
+<p class="fcs an d2">Sube tu recibo ahora. Es gratis, sin registro, y en 30 segundos sabras si te estan robando.</p>
+<a href="https://signal.axonexus.net" class="bp an d3" style="font-size:17px;padding:20px 48px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Escanear mi recibo gratis</a>
+<div class="fcb an d4">
+<div class="fci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Sin costo inicial</div>
+<div class="fci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>30% solo si ganamos</div>
+<div class="fci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>Datos confidenciales</div>
+</div></div></section>
+
+<footer><div class="ct">
+<p>Axonexus OU &#8226; Tallinn, Estonia &#8226; <a href="https://signal.axonexus.net">signal.axonexus.net</a></p>
+<p class="fl">Herramienta informativa. No constituye asesoria legal. TUO Condiciones de Uso OSIPTEL.</p>
+</div></footer>
+
+<script>
+const o=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting){x.target.classList.add('v');o.unobserve(x.target)}})},{threshold:.1});
+document.querySelectorAll('.an').forEach(e=>o.observe(e));
+const ca=document.getElementById('ca'),cm=document.getElementById('cm'),ct=document.getElementById('ct');
+function uc(){const a=parseFloat(ca.value)||0,m=parseInt(cm.value)||36,r=.04/12;let t=0;for(let i=0;i<m;i++)t+=a*Math.pow(1+r,m-i);ct.textContent='S/ '+t.toFixed(2)}
+ca.addEventListener('input',uc);cm.addEventListener('change',uc);uc();
+</script>
+</body></html>
