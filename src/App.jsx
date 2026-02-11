@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef, useMemo } from "react";
+import React, { useState, useCallback, useEffect, useRef, useMemo } from "react";
 import { Shield, Zap, Radio, FileSearch, PhoneOff, Calculator, Layers, ChevronRight, Activity, Search, CheckCircle2, AlertTriangle, X, ArrowRight, Eye, Lock, Signal, Wifi, Database, Cpu, ScanLine, Upload, FileText, Image, MessageCircle, Send, Copy, FileDown } from "lucide-react";
 
 
@@ -1503,9 +1503,9 @@ NO inventes hallazgos. SÉ PRECISO.`;
         </div>
       )}
 
-      {/* ═══ LEAD CAPTURE: Recupera tu dinero ═══ */}
+      {/* ═══ LEAD CAPTURE INLINE ═══ */}
       {res && res.hallazgos.length > 0 && (
-        <LeadCapture findings={res.hallazgos} resumen={res.resumen} reciboData={res.reciboData} />
+        <WaLead hallazgos={res.hallazgos} montoInd={res.resumen?.montoIndebido || 0} oper={res.reciboData?.operadora || "tu operadora"} />
       )}
 
       {/* Chat IA Post-Análisis — MOVED HERE for visibility */}
@@ -1666,62 +1666,51 @@ Cargos fijos mensuales cargo mensual facturado al cliente por el plan contratado
   );
 }
 
-// ── Lead Capture: Convierte hallazgos en clientes ──
-function LeadCapture({ findings, resumen, reciboData }) {
-  const [nombre, setNombre] = useState("");
-  const [telefono, setTelefono] = useState("");
-  
-  const montoMensual = resumen?.montoIndebido || 0;
-  const monto36 = montoMensual * 36;
-  const nHallazgos = findings?.length || 0;
-  const operadora = reciboData?.operadora || "tu operadora";
-
-  const openWhatsApp = () => {
-    const conceptos = findings.map(function(f) { return "- " + (f.kw || "cobro") + ": S/ " + Math.abs(f.monto || 0).toFixed(2); }).join("%0A");
-    const nombrePart = nombre ? "%0ANombre: " + nombre : "";
-    const telPart = telefono ? "%0ATelefono: " + telefono : "";
-    const msg = "COBROS INDEBIDOS DETECTADOS%0A%0ASignal detecto " + nHallazgos + " cobro(s) en recibo de " + operadora + "%0A%0ADetalle:%0A" + conceptos + "%0A%0ATotal mensual: S/ " + montoMensual.toFixed(2) + "%0AEstimado 36 meses: S/ " + monto36.toFixed(2) + nombrePart + telPart + "%0A%0AQuiero recuperar mi dinero.";
-    window.open("https://wa.me/51955008668?text=" + msg, "_blank");
-  };
-
-  return (
-    <div style={{ background: "rgba(16,185,129,0.08)", border: "2px solid rgba(37,211,102,0.4)", borderRadius: "16px", padding: "24px" }}>
-      <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "16px" }}>
-        <Shield size={24} style={{ color: "#34d399" }} />
-        <div>
-          <div style={{ color: "#34d399", fontWeight: 900, fontSize: "14px" }}>Recupera tu dinero con nosotros</div>
-          <div style={{ color: "rgba(255,255,255,0.3)", fontSize: "11px" }}>Solo cobramos si ganamos (30%). Sin costo inicial.</div>
-        </div>
-      </div>
-
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "8px", marginBottom: "16px" }}>
-        <div style={{ background: "rgba(0,0,0,0.3)", borderRadius: "12px", padding: "12px", textAlign: "center" }}>
-          <div style={{ color: "#34d399", fontWeight: 900, fontSize: "18px" }}>{"S/ " + monto36.toFixed(0)}</div>
-          <div style={{ color: "rgba(255,255,255,0.2)", fontSize: "9px" }}>A RECUPERAR</div>
-        </div>
-        <div style={{ background: "rgba(0,0,0,0.3)", borderRadius: "12px", padding: "12px", textAlign: "center" }}>
-          <div style={{ color: "rgba(255,255,255,0.5)", fontWeight: 900, fontSize: "18px" }}>0%</div>
-          <div style={{ color: "rgba(255,255,255,0.2)", fontSize: "9px" }}>COSTO INICIAL</div>
-        </div>
-        <div style={{ background: "rgba(0,0,0,0.3)", borderRadius: "12px", padding: "12px", textAlign: "center" }}>
-          <div style={{ color: "#fbbf24", fontWeight: 900, fontSize: "18px" }}>30%</div>
-          <div style={{ color: "rgba(255,255,255,0.2)", fontSize: "9px" }}>SOLO SI GANAMOS</div>
-        </div>
-      </div>
-
-      <input type="text" value={nombre} onChange={function(e) { setNombre(e.target.value); }} placeholder="Tu nombre completo"
-        style={{ width: "100%", background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: "12px", padding: "12px 16px", fontSize: "12px", color: "rgba(255,255,255,0.5)", marginBottom: "8px", boxSizing: "border-box", outline: "none" }} />
-      <input type="tel" value={telefono} onChange={function(e) { setTelefono(e.target.value); }} placeholder="Tu celular (opcional)"
-        style={{ width: "100%", background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: "12px", padding: "12px 16px", fontSize: "12px", color: "rgba(255,255,255,0.5)", marginBottom: "16px", boxSizing: "border-box", outline: "none" }} />
-
-      <button onClick={openWhatsApp} disabled={!nombre.trim()}
-        style={{ width: "100%", padding: "16px", borderRadius: "12px", border: "none", background: "linear-gradient(135deg, #25D366, #128C7E)", color: "white", fontWeight: 900, fontSize: "14px", cursor: nombre.trim() ? "pointer" : "not-allowed", opacity: nombre.trim() ? 1 : 0.3, letterSpacing: "1px" }}>
-        HABLAR CON UN ASESOR POR WHATSAPP
-      </button>
-      <div style={{ textAlign: "center", fontSize: "10px", color: "rgba(255,255,255,0.15)", marginTop: "8px" }}>
-        Te contactamos en menos de 24 horas. Sin compromiso.
-      </div>
-    </div>
+// ── WhatsApp Lead Capture ──
+function WaLead({ hallazgos, montoInd, oper }) {
+  const [nm, setNm] = useState("");
+  const [tel, setTel] = useState("");
+  const m36 = montoInd * 36;
+  return React.createElement("div", { 
+    style: { background: "rgba(16,185,129,0.08)", border: "2px solid rgba(37,211,102,0.4)", borderRadius: "16px", padding: "20px", marginTop: "0" }
+  },
+    React.createElement("div", { style: { display: "flex", alignItems: "center", gap: "10px", marginBottom: "14px" } },
+      React.createElement(Shield, { size: 22, style: { color: "#34d399" } }),
+      React.createElement("div", null,
+        React.createElement("div", { style: { color: "#34d399", fontWeight: 900, fontSize: "14px" } }, "Recupera tu dinero con nosotros"),
+        React.createElement("div", { style: { color: "rgba(255,255,255,0.3)", fontSize: "11px" } }, "Solo cobramos si ganamos (30%). Sin costo inicial.")
+      )
+    ),
+    React.createElement("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "8px", marginBottom: "14px" } },
+      React.createElement("div", { style: { background: "rgba(0,0,0,0.3)", borderRadius: "12px", padding: "10px", textAlign: "center" } },
+        React.createElement("div", { style: { color: "#34d399", fontWeight: 900, fontSize: "18px" } }, "S/ " + m36.toFixed(0)),
+        React.createElement("div", { style: { color: "rgba(255,255,255,0.2)", fontSize: "9px" } }, "A RECUPERAR")
+      ),
+      React.createElement("div", { style: { background: "rgba(0,0,0,0.3)", borderRadius: "12px", padding: "10px", textAlign: "center" } },
+        React.createElement("div", { style: { color: "rgba(255,255,255,0.5)", fontWeight: 900, fontSize: "18px" } }, "0%"),
+        React.createElement("div", { style: { color: "rgba(255,255,255,0.2)", fontSize: "9px" } }, "COSTO INICIAL")
+      ),
+      React.createElement("div", { style: { background: "rgba(0,0,0,0.3)", borderRadius: "12px", padding: "10px", textAlign: "center" } },
+        React.createElement("div", { style: { color: "#fbbf24", fontWeight: 900, fontSize: "18px" } }, "30%"),
+        React.createElement("div", { style: { color: "rgba(255,255,255,0.2)", fontSize: "9px" } }, "SOLO SI GANAMOS")
+      )
+    ),
+    React.createElement("input", { type: "text", value: nm, onChange: function(e){ setNm(e.target.value); }, placeholder: "Tu nombre completo",
+      style: { width: "100%", background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "12px", padding: "12px", fontSize: "12px", color: "rgba(255,255,255,0.5)", marginBottom: "8px", boxSizing: "border-box", outline: "none" }
+    }),
+    React.createElement("input", { type: "tel", value: tel, onChange: function(e){ setTel(e.target.value); }, placeholder: "Tu celular (opcional)",
+      style: { width: "100%", background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "12px", padding: "12px", fontSize: "12px", color: "rgba(255,255,255,0.5)", marginBottom: "14px", boxSizing: "border-box", outline: "none" }
+    }),
+    React.createElement("button", { 
+      disabled: !nm.trim(),
+      onClick: function() {
+        var items = hallazgos.map(function(f){ return "- " + (f.kw||"cobro") + ": S/" + Math.abs(f.monto||0).toFixed(2); }).join("%0A");
+        var msg = "COBROS INDEBIDOS - AXONEXUS SIGNAL%0A%0ADetecte " + hallazgos.length + " cobro(s) en recibo de " + oper + "%0A%0A" + items + "%0A%0ATotal mensual: S/" + montoInd.toFixed(2) + "%0AEstimado 36 meses: S/" + m36.toFixed(2) + (nm ? "%0ANombre: "+nm : "") + (tel ? "%0ATel: "+tel : "") + "%0A%0AQuiero recuperar mi dinero.";
+        window.open("https://wa.me/51955008668?text=" + msg, "_blank");
+      },
+      style: { width: "100%", padding: "16px", borderRadius: "12px", border: "none", background: nm.trim() ? "linear-gradient(135deg, #25D366, #128C7E)" : "#333", color: "white", fontWeight: 900, fontSize: "13px", cursor: nm.trim() ? "pointer" : "not-allowed", opacity: nm.trim() ? 1 : 0.3, letterSpacing: "1px" }
+    }, "HABLAR CON UN ASESOR POR WHATSAPP"),
+    React.createElement("div", { style: { textAlign: "center", fontSize: "10px", color: "rgba(255,255,255,0.15)", marginTop: "8px" } }, "Te contactamos en menos de 24 horas. Sin compromiso.")
   );
 }
 
