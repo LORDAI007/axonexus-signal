@@ -1,5 +1,5 @@
 [build]
-  command = "npm run build"
+  command = "npm run build && cp dist/index.html dist/app.html && cp public/landing.html dist/index.html"
   publish = "dist"
   functions = "netlify/functions"
 
@@ -9,17 +9,11 @@
   status = 200
 
 [[redirects]]
-  from = "/"
-  to = "/landing.html"
-  status = 200
-  force = true
-
-[[redirects]]
   from = "/app"
-  to = "/index.html"
+  to = "/app.html"
   status = 200
 
 [[redirects]]
   from = "/app/*"
-  to = "/index.html"
+  to = "/app.html"
   status = 200
