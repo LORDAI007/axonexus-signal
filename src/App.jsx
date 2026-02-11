@@ -700,7 +700,7 @@ function Feed({ findings }) {
           </div>
         ))}
       </div>
-      <style>{`@keyframes slideIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}`}</style>
+      <style>{``}</style>
     </Glass>
   );
 }
@@ -1459,13 +1459,19 @@ NO inventes hallazgos. SÉ PRECISO.`;
               {/* Individual findings */}
               <div className="space-y-3">
                 {res.hallazgos.map((h, i) => (
-                  <div key={i} className="rounded-xl border border-white/[0.04] bg-white/[0.01] p-4 hover:bg-white/[0.025] hover:border-red-500/10 transition-all duration-300">
+                  <div key={i} className="rounded-xl border border-white/[0.04] bg-white/[0.01] p-4 hover:bg-white/[0.025] hover:border-red-500/10 transition-all duration-300 animate-slide-in"
+                    style={{ animationDelay: `${i * 0.1}s`, animationFillMode: "backwards" }}>
                     <div className="flex items-center gap-2 mb-2">
+                      <div className="w-6 h-6 rounded-md bg-red-500/15 border border-red-500/20 flex items-center justify-center text-red-400 text-[10px] font-black flex-shrink-0">{i + 1}</div>
                       <Badge c={h.risk === "alto" ? "red" : "amber"}>{h.tipo}</Badge>
                       <span className="text-sm font-black text-white/60">{h.kw}</span>
-                      {h.monto !== undefined && h.monto !== 0 && <span className="ml-auto text-sm font-black text-red-400/70">S/ {Math.abs(h.monto).toFixed(2)}</span>}
+                      {h.monto !== undefined && h.monto !== 0 && (
+                        <span className="ml-auto text-sm font-black text-red-400 mono" style={{ textShadow: "0 0 12px rgba(248,113,113,0.3)" }}>
+                          S/ {Math.abs(h.monto).toFixed(2)}
+                        </span>
+                      )}
                     </div>
-                    <div className="text-xs text-white/15 bg-black/30 rounded-lg p-2.5 mb-2 border border-white/[0.02]" style={{ fontFamily: "monospace", fontSize: "10px" }}>{h.ctx}</div>
+                    <div className="text-xs text-white/15 bg-black/30 rounded-lg p-2.5 mb-2 border border-white/[0.02] mono" style={{ fontSize: "10px" }}>{h.ctx}</div>
                     <div className="text-xs text-emerald-400/40 mb-2 flex items-center gap-1">
                       <Lock size={10} /> {h.norma}
                     </div>
@@ -1480,6 +1486,22 @@ NO inventes hallazgos. SÉ PRECISO.`;
             </>
           )}
         </Glass>
+      )}
+
+      {/* ═══ CTA: Go to Calculator ═══ */}
+      {res && res.hallazgos.length > 0 && (
+        <div className="animate-slide-in" style={{ animationDelay: "0.3s", animationFillMode: "backwards" }}>
+          <button onClick={() => { 
+            // Navigate to calc tab through parent
+            const evt = new CustomEvent("signal-nav", { detail: "calc" });
+            window.dispatchEvent(evt);
+          }}
+            className="w-full group relative flex items-center justify-center gap-3 px-6 py-4 bg-gradient-to-r from-emerald-500/10 to-cyan-500/10 border border-emerald-500/20 rounded-2xl text-emerald-400 font-black text-sm tracking-widest uppercase transition-all duration-300 hover:from-emerald-500/20 hover:to-cyan-500/20 hover:border-emerald-500/30 hover:shadow-lg hover:shadow-emerald-500/10">
+            <Calculator size={18} strokeWidth={2.5} />
+            CALCULAR DEVOLUCIÓN TOTAL
+            <ArrowRight size={16} strokeWidth={3} className="group-hover:translate-x-1 transition-transform" />
+          </button>
+        </div>
       )}
 
       {/* Checklist */}
@@ -1602,11 +1624,10 @@ NO inventes hallazgos. SÉ PRECISO.`;
         <ChatIA receiptText={txt} analysisResult={res} aiResult={aiResult} />
       )}
 
-      {/* Botón recibo de prueba */}
-      {!txt && (
-        <Glass className="p-4">
-          <button onClick={() => {
-            const sampleReceipt = `Integratel Perú S.A.A. | R.U.C. 20100017491 | Jr. Domingo Martínez Luján N° 1130 | Lima – Lima - Surquillo Página 1/3
+      {/* Botón recibo de prueba — siempre visible */}
+      <Glass className="p-4">
+        <button onClick={() => {
+          const sampleReceipt = `Integratel Perú S.A.A. | R.U.C. 20100017491 | Jr. Domingo Martínez Luján N° 1130 | Lima – Lima - Surquillo Página 1/3
 Movistar Móvil
 Recibo Febrero
 MARIA ELENA GUTIERREZ TORRES
@@ -1628,12 +1649,15 @@ IGV (18%) S/ 13.65
 Total facturado S/ 89.50
 Conceptos facturables
 Cargos fijos mensuales cargo mensual facturado al cliente por el plan contratado para los servicios de voz y datos.`;
-            setTxt(sampleReceipt);
-          }} className="w-full flex items-center justify-center gap-2 py-2.5 text-xs text-white/20 hover:text-white/40 border border-dashed border-white/[0.06] hover:border-white/10 rounded-xl transition-all">
-            <FileDown size={14} /> Cargar recibo de prueba (con cobros VAS)
-          </button>
-        </Glass>
-      )}
+          setTxt(sampleReceipt);
+          setRes(null);
+          setAiResult(null);
+          setAiLoading(false);
+          setUploadMsg("");
+        }} className="w-full flex items-center justify-center gap-2 py-3 text-xs text-amber-400/30 hover:text-amber-400/50 border border-dashed border-amber-500/[0.1] hover:border-amber-500/20 rounded-xl transition-all hover:bg-amber-500/[0.02]">
+          <FileDown size={14} /> 🧪 Cargar recibo de DEMO (con 3 cobros VAS ilegales)
+        </button>
+      </Glass>
     </div>
   );
 }
@@ -2007,6 +2031,13 @@ export default function App() {
   const addFinding = useCallback((f) => {
     setFindings(prev => [...prev, f]);
     if (f.monto) setTotalRec(prev => prev + Math.abs(f.monto));
+  }, []);
+
+  // Listen for cross-tab navigation events
+  useEffect(() => {
+    const handler = (e) => setTab(e.detail);
+    window.addEventListener("signal-nav", handler);
+    return () => window.removeEventListener("signal-nav", handler);
   }, []);
 
   if (!started) return <><Skyline /><Landing onStart={() => setStarted(true)} /></>;
