@@ -1679,23 +1679,11 @@ function LeadCapture({ findings, resumen, reciboData }) {
   const operadora = reciboData?.operadora || "tu operadora";
 
   const buildWhatsAppMsg = () => {
-    const conceptos = findings.map(f => `• ${f.kw}: S/ ${Math.abs(f.monto || 0).toFixed(2)}`).join("\n");
-    return encodeURIComponent(
-`🔴 *COBROS INDEBIDOS DETECTADOS POR AXONEXUS SIGNAL*
-
-Hola, Signal detectó *${nHallazgos} cobro(s) indebido(s)* en mi recibo de *${operadora}*.
-
-📋 *Detalle:*
-${conceptos}
-
-💰 *Total mensual:* S/ ${montoMensual.toFixed(2)}
-💰 *Estimado 36 meses:* S/ ${monto36.toFixed(2)}
-
-${nombre ? `👤 *Nombre:* ${nombre}` : ""}
-${telefono ? `📱 *Teléfono:* ${telefono}` : ""}
-
-Quiero recuperar mi dinero. ¿Cómo procedo?`
-    );
+    const conceptos = findings.map(f => "• " + f.kw + ": S/ " + Math.abs(f.monto || 0).toFixed(2)).join("\n");
+    const nombreLine = nombre ? "\n👤 Nombre: " + nombre : "";
+    const telefonoLine = telefono ? "\n📱 Teléfono: " + telefono : "";
+    const msg = "🔴 *COBROS INDEBIDOS DETECTADOS POR AXONEXUS SIGNAL*\n\nHola, Signal detectó *" + nHallazgos + " cobro(s) indebido(s)* en mi recibo de *" + operadora + "*.\n\n📋 *Detalle:*\n" + conceptos + "\n\n💰 *Total mensual:* S/ " + montoMensual.toFixed(2) + "\n💰 *Estimado 36 meses:* S/ " + monto36.toFixed(2) + nombreLine + telefonoLine + "\n\nQuiero recuperar mi dinero. ¿Cómo procedo?";
+    return encodeURIComponent(msg);
   };
 
   const openWhatsApp = () => {
