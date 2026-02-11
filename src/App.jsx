@@ -616,9 +616,9 @@ function RadarScan({ active, onDone, aiPhase }) {
 }
 
 // ── Glass Card ──
-function Glass({ children, className = "", glow, hoverGlow = true }) {
+function Glass({ children, className = "", glow, hoverGlow = true, style }) {
   return (
-    <div className={`group relative rounded-2xl border border-white/[0.06] backdrop-blur-xl transition-all duration-500
+    <div style={style} className={`group relative rounded-2xl border border-white/[0.06] backdrop-blur-xl transition-all duration-500
       ${glow ? "bg-emerald-500/[0.02] border-emerald-500/[0.12] shadow-lg shadow-emerald-500/[0.05]" : "bg-white/[0.02]"}
       ${hoverGlow ? "hover:border-emerald-400/20 hover:shadow-lg hover:shadow-emerald-500/[0.08] hover:bg-white/[0.03]" : ""}
       ${className}`}>
