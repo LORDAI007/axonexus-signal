@@ -1492,7 +1492,6 @@ NO inventes hallazgos. SÉ PRECISO.`;
       {res && res.hallazgos.length > 0 && (
         <div className="animate-slide-in" style={{ animationDelay: "0.3s", animationFillMode: "backwards" }}>
           <button onClick={() => { 
-            // Navigate to calc tab through parent
             const evt = new CustomEvent("signal-nav", { detail: "calc" });
             window.dispatchEvent(evt);
           }}
@@ -1502,6 +1501,11 @@ NO inventes hallazgos. SÉ PRECISO.`;
             <ArrowRight size={16} strokeWidth={3} className="group-hover:translate-x-1 transition-transform" />
           </button>
         </div>
+      )}
+
+      {/* ═══ LEAD CAPTURE: Recupera tu dinero ═══ */}
+      {res && res.hallazgos.length > 0 && (
+        <LeadCapture findings={res.hallazgos} resumen={res.resumen} reciboData={res.reciboData} />
       )}
 
       {/* Chat IA Post-Análisis — MOVED HERE for visibility */}
@@ -1658,6 +1662,148 @@ Cargos fijos mensuales cargo mensual facturado al cliente por el plan contratado
           <FileDown size={14} /> 🧪 Cargar recibo de DEMO (con 3 cobros VAS ilegales)
         </button>
       </Glass>
+    </div>
+  );
+}
+
+// ── Lead Capture: Convierte hallazgos en clientes ──
+function LeadCapture({ findings, resumen, reciboData }) {
+  const [nombre, setNombre] = useState("");
+  const [telefono, setTelefono] = useState("");
+  const [enviado, setEnviado] = useState(false);
+  const WA_NUMBER = "51955008668";
+
+  const montoMensual = resumen?.montoIndebido || 0;
+  const monto36 = montoMensual * 36;
+  const nHallazgos = findings?.length || 0;
+  const operadora = reciboData?.operadora || "tu operadora";
+
+  const buildWhatsAppMsg = () => {
+    const conceptos = findings.map(f => `• ${f.kw}: S/ ${Math.abs(f.monto || 0).toFixed(2)}`).join("\n");
+    return encodeURIComponent(
+`🔴 *COBROS INDEBIDOS DETECTADOS POR AXONEXUS SIGNAL*
+
+Hola, Signal detectó *${nHallazgos} cobro(s) indebido(s)* en mi recibo de *${operadora}*.
+
+📋 *Detalle:*
+${conceptos}
+
+💰 *Total mensual:* S/ ${montoMensual.toFixed(2)}
+💰 *Estimado 36 meses:* S/ ${monto36.toFixed(2)}
+
+${nombre ? `👤 *Nombre:* ${nombre}` : ""}
+${telefono ? `📱 *Teléfono:* ${telefono}` : ""}
+
+Quiero recuperar mi dinero. ¿Cómo procedo?`
+    );
+  };
+
+  const openWhatsApp = () => {
+    window.open(`https://wa.me/${WA_NUMBER}?text=${buildWhatsAppMsg()}`, "_blank");
+  };
+
+  const handleSubmit = () => {
+    if (!nombre.trim()) return;
+    setEnviado(true);
+    openWhatsApp();
+  };
+
+  return (
+    <div className="rounded-2xl overflow-hidden" style={{ 
+      background: "linear-gradient(135deg, rgba(16,185,129,0.06), rgba(6,182,212,0.04), rgba(168,85,247,0.03))", 
+      border: "1px solid rgba(16,185,129,0.2)",
+      boxShadow: "0 0 30px rgba(16,185,129,0.06)"
+    }}>
+      {/* Header */}
+      <div className="px-5 pt-5 pb-4">
+        <div className="flex items-center gap-3 mb-3">
+          <div className="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-500/20 flex items-center justify-center text-lg">
+            💰
+          </div>
+          <div>
+            <h3 className="text-sm font-black text-emerald-400">¿Quieres recuperar tu dinero?</h3>
+            <p className="text-[11px] text-white/25">Nuestro equipo legal se encarga. Solo cobramos si ganamos.</p>
+          </div>
+        </div>
+
+        {/* Value proposition */}
+        <div className="grid grid-cols-3 gap-2 mb-4">
+          <div className="rounded-xl bg-black/30 border border-white/[0.04] p-2.5 text-center">
+            <p className="text-lg font-black text-emerald-400" style={{ fontFamily: "'JetBrains Mono',monospace" }}>
+              S/ {monto36.toFixed(0)}
+            </p>
+            <p className="text-[9px] text-white/20 mt-0.5">A RECUPERAR</p>
+          </div>
+          <div className="rounded-xl bg-black/30 border border-white/[0.04] p-2.5 text-center">
+            <p className="text-lg font-black text-white/50" style={{ fontFamily: "'JetBrains Mono',monospace" }}>
+              0%
+            </p>
+            <p className="text-[9px] text-white/20 mt-0.5">COSTO INICIAL</p>
+          </div>
+          <div className="rounded-xl bg-black/30 border border-white/[0.04] p-2.5 text-center">
+            <p className="text-lg font-black text-amber-400" style={{ fontFamily: "'JetBrains Mono',monospace" }}>
+              30%
+            </p>
+            <p className="text-[9px] text-white/20 mt-0.5">SOLO SI GANAMOS</p>
+          </div>
+        </div>
+
+        {!enviado ? (
+          <>
+            {/* Form */}
+            <div className="space-y-2.5 mb-4">
+              <input 
+                type="text" value={nombre} onChange={e => setNombre(e.target.value)}
+                placeholder="Tu nombre completo"
+                className="w-full bg-white/[0.03] border border-white/[0.06] rounded-xl px-4 py-3 text-xs text-white/50 placeholder-white/12 focus:outline-none focus:border-emerald-500/25 transition-all"
+              />
+              <input 
+                type="tel" value={telefono} onChange={e => setTelefono(e.target.value)}
+                placeholder="Tu número de celular (opcional)"
+                className="w-full bg-white/[0.03] border border-white/[0.06] rounded-xl px-4 py-3 text-xs text-white/50 placeholder-white/12 focus:outline-none focus:border-emerald-500/25 transition-all"
+              />
+            </div>
+
+            {/* WhatsApp CTA */}
+            <button onClick={handleSubmit} disabled={!nombre.trim()}
+              className="w-full flex items-center justify-center gap-3 px-6 py-4 rounded-xl font-black text-sm tracking-wider transition-all duration-300 hover:scale-[1.02] active:scale-100 disabled:opacity-30 disabled:cursor-not-allowed"
+              style={{ 
+                background: "linear-gradient(135deg, #25D366, #128C7E)",
+                color: "white",
+                boxShadow: "0 4px 20px rgba(37,211,102,0.3)"
+              }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+              HABLAR CON UN ASESOR AHORA
+            </button>
+
+            <p className="text-center text-[10px] text-white/15 mt-2">
+              Te contactamos en menos de 24 horas. Sin compromiso.
+            </p>
+          </>
+        ) : (
+          <div className="text-center py-4">
+            <div className="text-3xl mb-2">✅</div>
+            <p className="text-sm font-bold text-emerald-400">¡Mensaje enviado!</p>
+            <p className="text-xs text-white/25 mt-1">Te contactaremos pronto por WhatsApp.</p>
+            <button onClick={openWhatsApp} className="mt-3 text-xs text-emerald-400/40 hover:text-emerald-400/60 underline transition-colors">
+              ¿No se abrió WhatsApp? Click aquí
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Footer trust */}
+      <div className="px-5 py-3 bg-black/30 border-t border-white/[0.04] flex items-center justify-center gap-4">
+        <div className="flex items-center gap-1.5 text-[10px] text-white/15">
+          <Lock size={10} className="text-emerald-400/30" /> Tus datos son confidenciales
+        </div>
+        <div className="flex items-center gap-1.5 text-[10px] text-white/15">
+          <Shield size={10} className="text-emerald-400/30" /> Sin costo inicial
+        </div>
+        <div className="flex items-center gap-1.5 text-[10px] text-white/15">
+          <CheckCircle2 size={10} className="text-emerald-400/30" /> Solo cobramos si ganamos
+        </div>
+      </div>
     </div>
   );
 }
