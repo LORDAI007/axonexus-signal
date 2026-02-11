@@ -1670,122 +1670,58 @@ Cargos fijos mensuales cargo mensual facturado al cliente por el plan contratado
 function LeadCapture({ findings, resumen, reciboData }) {
   const [nombre, setNombre] = useState("");
   const [telefono, setTelefono] = useState("");
-  const [enviado, setEnviado] = useState(false);
-  const WA_NUMBER = "51955008668";
-
+  
   const montoMensual = resumen?.montoIndebido || 0;
   const monto36 = montoMensual * 36;
   const nHallazgos = findings?.length || 0;
   const operadora = reciboData?.operadora || "tu operadora";
 
-  const buildWhatsAppMsg = () => {
-    const conceptos = findings.map(f => "- " + f.kw + ": S/ " + Math.abs(f.monto || 0).toFixed(2)).join("\n");
-    const nombreLine = nombre ? "\nNombre: " + nombre : "";
-    const telefonoLine = telefono ? "\nTelefono: " + telefono : "";
-    const msg = "COBROS INDEBIDOS DETECTADOS POR AXONEXUS SIGNAL\n\nSignal detecto " + nHallazgos + " cobro(s) indebido(s) en mi recibo de " + operadora + ".\n\nDetalle:\n" + conceptos + "\n\nTotal mensual: S/ " + montoMensual.toFixed(2) + "\nEstimado 36 meses: S/ " + monto36.toFixed(2) + nombreLine + telefonoLine + "\n\nQuiero recuperar mi dinero.";
-    return encodeURIComponent(msg);
-  };
-
   const openWhatsApp = () => {
-    window.open("https://wa.me/" + WA_NUMBER + "?text=" + buildWhatsAppMsg(), "_blank");
+    const conceptos = findings.map(function(f) { return "- " + (f.kw || "cobro") + ": S/ " + Math.abs(f.monto || 0).toFixed(2); }).join("%0A");
+    const nombrePart = nombre ? "%0ANombre: " + nombre : "";
+    const telPart = telefono ? "%0ATelefono: " + telefono : "";
+    const msg = "COBROS INDEBIDOS DETECTADOS%0A%0ASignal detecto " + nHallazgos + " cobro(s) en recibo de " + operadora + "%0A%0ADetalle:%0A" + conceptos + "%0A%0ATotal mensual: S/ " + montoMensual.toFixed(2) + "%0AEstimado 36 meses: S/ " + monto36.toFixed(2) + nombrePart + telPart + "%0A%0AQuiero recuperar mi dinero.";
+    window.open("https://wa.me/51955008668?text=" + msg, "_blank");
   };
-
-  const handleSubmit = () => {
-    if (!nombre.trim()) return;
-    setEnviado(true);
-    openWhatsApp();
-  };
-
-  if (enviado) {
-    return (
-      <Glass glow className="p-5">
-        <div className="text-center py-4">
-          <CheckCircle2 size={40} className="text-emerald-400 mx-auto mb-3" />
-          <p className="text-sm font-bold text-emerald-400">Mensaje enviado por WhatsApp</p>
-          <p className="text-xs text-white/25 mt-1">Te contactaremos pronto.</p>
-          <button onClick={openWhatsApp} className="mt-3 text-xs text-emerald-400/40 hover:text-emerald-400/60 underline transition-colors">
-            Abrir WhatsApp de nuevo
-          </button>
-        </div>
-      </Glass>
-    );
-  }
 
   return (
-    <Glass className="overflow-hidden" style={{ borderColor: "rgba(37,211,102,0.2)", boxShadow: "0 0 30px rgba(37,211,102,0.06)" }}>
-      <div className="px-5 pt-5 pb-4">
-        <div className="flex items-center gap-3 mb-3">
-          <div className="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-500/20 flex items-center justify-center">
-            <Zap size={20} className="text-emerald-400" />
-          </div>
-          <div>
-            <h3 className="text-sm font-black text-emerald-400">Recupera tu dinero con nosotros</h3>
-            <p className="text-[11px] text-white/25">Nuestro equipo legal se encarga. Solo cobramos si ganamos.</p>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-3 gap-2 mb-4">
-          <div className="rounded-xl bg-black/30 border border-white/[0.04] p-2.5 text-center">
-            <p className="text-lg font-black text-emerald-400" style={{ fontFamily: "'JetBrains Mono',monospace" }}>
-              {"S/ " + monto36.toFixed(0)}
-            </p>
-            <p className="text-[9px] text-white/20 mt-0.5">A RECUPERAR</p>
-          </div>
-          <div className="rounded-xl bg-black/30 border border-white/[0.04] p-2.5 text-center">
-            <p className="text-lg font-black text-white/50" style={{ fontFamily: "'JetBrains Mono',monospace" }}>
-              0%
-            </p>
-            <p className="text-[9px] text-white/20 mt-0.5">COSTO INICIAL</p>
-          </div>
-          <div className="rounded-xl bg-black/30 border border-white/[0.04] p-2.5 text-center">
-            <p className="text-lg font-black text-amber-400" style={{ fontFamily: "'JetBrains Mono',monospace" }}>
-              30%
-            </p>
-            <p className="text-[9px] text-white/20 mt-0.5">SOLO SI GANAMOS</p>
-          </div>
-        </div>
-
-        <div className="space-y-2.5 mb-4">
-          <input 
-            type="text" value={nombre} onChange={e => setNombre(e.target.value)}
-            placeholder="Tu nombre completo"
-            className="w-full bg-white/[0.03] border border-white/[0.06] rounded-xl px-4 py-3 text-xs text-white/50 placeholder-white/12 focus:outline-none focus:border-emerald-500/25 transition-all"
-          />
-          <input 
-            type="tel" value={telefono} onChange={e => setTelefono(e.target.value)}
-            placeholder="Tu numero de celular (opcional)"
-            className="w-full bg-white/[0.03] border border-white/[0.06] rounded-xl px-4 py-3 text-xs text-white/50 placeholder-white/12 focus:outline-none focus:border-emerald-500/25 transition-all"
-          />
-        </div>
-
-        <button onClick={handleSubmit} disabled={!nombre.trim()}
-          className="w-full flex items-center justify-center gap-3 px-6 py-4 rounded-xl font-black text-sm tracking-wider transition-all duration-300 hover:scale-[1.02] active:scale-100 disabled:opacity-30 disabled:cursor-not-allowed"
-          style={{ 
-            background: "linear-gradient(135deg, #25D366, #128C7E)",
-            color: "white",
-            boxShadow: "0 4px 20px rgba(37,211,102,0.3)"
-          }}>
-          <PhoneOff size={18} />
-          HABLAR CON UN ASESOR AHORA
-        </button>
-
-        <p className="text-center text-[10px] text-white/15 mt-2">
-          Te contactamos en menos de 24 horas. Sin compromiso.
-        </p>
-      </div>
-
-      <div className="px-5 py-3 bg-black/30 border-t border-white/[0.04] flex items-center justify-center gap-4">
-        <div className="flex items-center gap-1.5 text-[10px] text-white/15">
-          <Lock size={10} className="text-emerald-400/30" /> Datos confidenciales
-        </div>
-        <div className="flex items-center gap-1.5 text-[10px] text-white/15">
-          <Shield size={10} className="text-emerald-400/30" /> Sin costo inicial
-        </div>
-        <div className="flex items-center gap-1.5 text-[10px] text-white/15">
-          <CheckCircle2 size={10} className="text-emerald-400/30" /> Solo cobramos si ganamos
+    <div style={{ background: "rgba(16,185,129,0.08)", border: "2px solid rgba(37,211,102,0.4)", borderRadius: "16px", padding: "24px" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "16px" }}>
+        <Shield size={24} style={{ color: "#34d399" }} />
+        <div>
+          <div style={{ color: "#34d399", fontWeight: 900, fontSize: "14px" }}>Recupera tu dinero con nosotros</div>
+          <div style={{ color: "rgba(255,255,255,0.3)", fontSize: "11px" }}>Solo cobramos si ganamos (30%). Sin costo inicial.</div>
         </div>
       </div>
-    </Glass>
+
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "8px", marginBottom: "16px" }}>
+        <div style={{ background: "rgba(0,0,0,0.3)", borderRadius: "12px", padding: "12px", textAlign: "center" }}>
+          <div style={{ color: "#34d399", fontWeight: 900, fontSize: "18px" }}>{"S/ " + monto36.toFixed(0)}</div>
+          <div style={{ color: "rgba(255,255,255,0.2)", fontSize: "9px" }}>A RECUPERAR</div>
+        </div>
+        <div style={{ background: "rgba(0,0,0,0.3)", borderRadius: "12px", padding: "12px", textAlign: "center" }}>
+          <div style={{ color: "rgba(255,255,255,0.5)", fontWeight: 900, fontSize: "18px" }}>0%</div>
+          <div style={{ color: "rgba(255,255,255,0.2)", fontSize: "9px" }}>COSTO INICIAL</div>
+        </div>
+        <div style={{ background: "rgba(0,0,0,0.3)", borderRadius: "12px", padding: "12px", textAlign: "center" }}>
+          <div style={{ color: "#fbbf24", fontWeight: 900, fontSize: "18px" }}>30%</div>
+          <div style={{ color: "rgba(255,255,255,0.2)", fontSize: "9px" }}>SOLO SI GANAMOS</div>
+        </div>
+      </div>
+
+      <input type="text" value={nombre} onChange={function(e) { setNombre(e.target.value); }} placeholder="Tu nombre completo"
+        style={{ width: "100%", background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: "12px", padding: "12px 16px", fontSize: "12px", color: "rgba(255,255,255,0.5)", marginBottom: "8px", boxSizing: "border-box", outline: "none" }} />
+      <input type="tel" value={telefono} onChange={function(e) { setTelefono(e.target.value); }} placeholder="Tu celular (opcional)"
+        style={{ width: "100%", background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: "12px", padding: "12px 16px", fontSize: "12px", color: "rgba(255,255,255,0.5)", marginBottom: "16px", boxSizing: "border-box", outline: "none" }} />
+
+      <button onClick={openWhatsApp} disabled={!nombre.trim()}
+        style={{ width: "100%", padding: "16px", borderRadius: "12px", border: "none", background: "linear-gradient(135deg, #25D366, #128C7E)", color: "white", fontWeight: 900, fontSize: "14px", cursor: nombre.trim() ? "pointer" : "not-allowed", opacity: nombre.trim() ? 1 : 0.3, letterSpacing: "1px" }}>
+        HABLAR CON UN ASESOR POR WHATSAPP
+      </button>
+      <div style={{ textAlign: "center", fontSize: "10px", color: "rgba(255,255,255,0.15)", marginTop: "8px" }}>
+        Te contactamos en menos de 24 horas. Sin compromiso.
+      </div>
+    </div>
   );
 }
 
